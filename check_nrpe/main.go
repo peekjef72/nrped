@@ -3,8 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/canonical/nrped/common"
 	"github.com/droundy/goopt"
-	"github.com/vpereira/nrped/common"
 	"net"
 	"os"
 )

@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/canonical/nrped/common"
+	"github.com/canonical/nrped/drop_privilege"
+	"github.com/canonical/nrped/read_config"
 	"github.com/droundy/goopt"
-	"github.com/vpereira/nrped/common"
-	"github.com/vpereira/nrped/drop_privilege"
-	"github.com/vpereira/nrped/read_config"
 	"net"
 	"os"
 )
