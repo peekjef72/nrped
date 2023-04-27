@@ -10,9 +10,13 @@ import (
 	"github.com/droundy/goopt"
 	"github.com/go-kit/log"
 	"github.com/go-kit/log/level"
-	"github.com/peekjef72/common"
-	"github.com/peekjef72/drop_privilege"
-	"github.com/peekjef72/read_config"
+	"github.com/peekjef72/nrped/common"
+	"github.com/peekjef72/nrped/drop_privilege"
+	"github.com/peekjef72/nrped/read_config"
+
+	// "github.com/peekjef72/common"
+	// "github.com/peekjef72/drop_privilege"
+	// "github.com/peekjef72/read_config"
 	"github.com/prometheus/common/promlog"
 	"github.com/spacemonkeygo/openssl"
 )
