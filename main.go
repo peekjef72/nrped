@@ -68,7 +68,7 @@ func main() {
 		service = net.JoinHostPort("0.0.0.0", config_obj.ServerPort)
 	}
 	level.Info(logger).Log("msg", "config", "listen", service)
-	level.Info(logger).Log("msg", "config", "transport_mode", config_obj.TransportMode, "status", "not implemented!")
+	level.Info(logger).Log("msg", "config", "transport_mode", config_obj.TransportMode)
 
 	level.Info(logger).Log("msg", "config", "nrpe_user", config_obj.Nrpe_user, "nrpe_group", config_obj.Nrpe_group)
 	level.Info(logger).Log("msg", "config", "nasty_chars", config_obj.NastyMetachars)
@@ -193,7 +193,7 @@ func handleClient(conn net.Conn, config_obj *read_config.ReadConfig) {
 	} else {
 		cfg_cmd, err := config_obj.GetCommand(cmd.Name)
 		if err != nil {
-			level.Info(logger).Log("msg", "command '%s' not found'", cmd.Name)
+			level.Info(logger).Log("msg", "command not found", "command", cmd.Name)
 			pkt_send.SetResultCode(common.STATE_UNKNOWN)
 			goto send_result
 		}

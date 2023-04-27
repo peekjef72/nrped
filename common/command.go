@@ -58,25 +58,33 @@ func (c *NrpeCommand) Execute(cmd_params *NrpeCommand, nasty_chars string, logge
 	// have to substitute $ARGx$ with command parameter x if it exists!
 	regex := *regexp.MustCompile(`^\$ARG(\d+)\$$`)
 
-	for i := range c.Args {
-		res := regex.FindStringSubmatch(c.Args[i])
-		if len(res) > 0 {
-			if arg_num, err := strconv.Atoi(res[1]); err == nil {
-				if arg_num >= 1 && arg_num <= len(c.Args) && arg_num <= len(cmd_params.Args) {
-					cmd.Args[i] = cmd_params.Args[arg_num-1]
+	if len(c.Args) > 0 {
+		for i := range c.Args {
+			res := regex.FindStringSubmatch(c.Args[i])
+			if len(res) > 0 {
+				if arg_num, err := strconv.Atoi(res[1]); err == nil {
+					if arg_num >= 1 && arg_num <= len(c.Args) {
+						if arg_num <= len(cmd_params.Args) {
+							cmd.Args[i] = cmd_params.Args[arg_num-1]
+						} else {
+							cmd.Args[i] = ""
+						}
+					}
 				}
+			} else {
+				cmd.Args[i] = c.Args[i]
 			}
-			// if
-
-		} else {
-			cmd.Args[i] = c.Args[i]
-		}
-		if strings.ContainsAny(cmd.Args[i], nasty_chars) {
-			if logger != nil {
-				level.Debug(logger).Log("msg", "command parameter contains nasty chars", "index", i, "param", cmd.Args[i])
+			if strings.ContainsAny(cmd.Args[i], nasty_chars) {
+				if logger != nil {
+					level.Debug(logger).Log("msg", "command parameter contains nasty chars", "index", i, "param", cmd.Args[i])
+				}
+				return STATE_CRITICAL, []byte("nasty chars found")
 			}
-			return STATE_CRITICAL, []byte("nasty chars found")
 		}
+		// well... it seems that if Args[x] contains several args ("-w5% -c3%") command exec doesn't understand these 2 params!!
+		// have to join all parts then split again !
+		args := strings.Join(cmd.Args, " ")
+		cmd.Args = strings.Fields(args)
 	}
 
 	cmdLine := exec.Command(cmd.Name, cmd.Args...)

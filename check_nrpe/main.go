@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/canonical/nrped/common"
 	"github.com/droundy/goopt"
@@ -75,6 +76,11 @@ func main() {
 		fmt.Printf("%s -h for help\n", os.Args[0])
 		os.Exit(1)
 	}
+	goopt.Description = func() string {
+		return "Check nrpe go program to contact a NRPEDaemon."
+	}
+	goopt.Version = "0.0.3"
+	goopt.Summary = "Check nrpe go program to contact a NRPEDaemon."
 
 	var host = goopt.String([]string{"-H", "--host"}, "127.0.0.1", "The remote host running NRPE-Server")
 	var port = goopt.Int([]string{"-p", "--port"}, 5666, "The remote port on which the NRPE-server listens")
@@ -82,16 +88,18 @@ func main() {
 	var nrpe_version = goopt.Int([]string{"-n", "--nrpe_version"}, 4, "nrpe client packet version: 2, 3 or 4 (default)")
 	var command = goopt.String([]string{"-c", "--command"}, "_NRPE_CHECK",
 		"The check command defined in the nrpe.cfg file you would like to trigger. Default nrped version banner.")
-
+	var arguments []string
 	goopt.Parse(nil)
-	// service := fmt.Sprintf("%s:%d", *host, *port)
+	if len(goopt.Args) > 0 {
+		arguments = goopt.Args
+	}
 	service := net.JoinHostPort(*host, strconv.Itoa(*port))
 	conn := prepareConnection(service, *transport)
 	// close connection on exit
 	defer conn.Close()
 
 	// build nrpe command line with args base on human readable blank separated command and args
-	cmd := common.BuildNrpeCommand(*command)
+	cmd := common.NewNrpeCommand(*command, strings.Join(arguments, " "))
 	if *nrpe_version < common.NRPE_PACKET_VERSION_1 || *nrpe_version > common.NRPE_PACKET_VERSION_4 {
 		fmt.Println("invalid nrpe packet version")
 		*nrpe_version = common.NRPE_PACKET_VERSION_4
@@ -113,6 +121,7 @@ func main() {
 	response_from_command, err := common.ReceivePacket(conn)
 	if err != nil {
 		fmt.Printf("Error: '%s'\n", err)
+		os.Exit(common.STATE_UNKNOWN)
 	} else {
 		fmt.Println(response_from_command.GetCommandBuffer())
 	}
