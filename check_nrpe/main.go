@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/canonical/nrped/common"
 	"github.com/droundy/goopt"
+	"github.com/peekjef72/nrped/common"
 	"github.com/spacemonkeygo/openssl"
 )
 

@@ -1,4 +1,4 @@
-module github.com/canonical/nrped
+module github.com/peekjef72/nrped
 
 go 1.18
 
