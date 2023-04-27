@@ -10,5 +10,9 @@ deps:
 test: deps
 	go test ./...
 
+check_nrpe: deps
+	@mkdir -p bin
+	go build -C check_nrpe -o ../bin/check_nrpe
+
 clean:
 	rm -rf bin
